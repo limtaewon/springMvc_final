@@ -1,0 +1,121 @@
+<html lang="ko">
+<head>
+    <title>postView</title>
+    <style>
+        .border {
+            display: flex;
+            border: 1px solid black;
+            padding-bottom: 40px;
+            flex-direction: column;
+        }
+
+        .top {
+            display: flex;
+            gap: 40px;
+            border: 1px solid black;
+        }
+
+        .box {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+            padding: 7px;
+        }
+
+        .confirm {
+            display: flex;
+            gap: 7px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #ok {
+            width: 150px;
+        }
+
+        .cancel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            background-color: #EFEFEF;
+            border: 0.7px solid black;
+            border-radius: 2px;
+            font-size: 15px;
+        }
+
+        .cancel:hover {
+            background-color: #e7e6e6;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div class="top">
+    <div class="box">
+        <b style="font-size: 15px">title : </b>
+        <p th:text="${inquire.title}"/>
+    </div>
+    <div class="box">
+        <b style="font-size: 15px">category : </b>
+        <p th:text="${inquire.category}"/>
+    </div>
+    <div class="box" th:if="${inquire.isAnswer==false}">
+        <label for="isAnswerF">답변안됨</label>
+        <input type="checkbox" id="isAnswerF" name="isAnswer" checked disabled>
+    </div>
+    <div class="box" th:if="${inquire.isAnswer==true}">
+        <label for="isAnswerT">답변됨</label>
+        <input type="checkbox" id="isAnswerT" name="isAnswer" checked disabled>
+    </div>
+</div>
+
+<div class="border">
+    <h2>content</h2>
+    <div id="content" th:text="${inquire.content}"/>
+</div>
+<div class="border">
+    <div th:each="file : ${inquire.imageFiles}">
+        <a th:href="@{/image/{fileName}(fileName = ${file})}" th:text="${file}" target="_blank"/>
+    </div>
+</div>
+
+<div th:if="${inquire.isAnswer == false and user == false}">
+    <form th:action="@{/cs/admin/answer/{postID}(postID=${inquire.id})}" method="post">
+        <div class="border">
+            <div class="container">
+                <p> content : </p><textarea name="content" cols="100" rows="15"></textarea>
+            </div>
+        </div>
+        <div class="confirm">
+            <input id="ok" style="margin-top: 20px; padding: 10px" type="submit" value="확인"/>
+            <div class="cancel" style="margin-top: 20px; padding: 10px"
+                 onclick="location='http://localhost:8080/cs/admin'">
+                취소
+            </div>
+        </div>
+    </form>
+</div>
+
+<div th:if="${inquire.isAnswer == true and answer != null}">
+    <div class="top">
+        <div class="box">
+            <b>답변 매니저 : </b>
+            <div th:text="${answer.managerID}"/>
+        </div>
+        <div class="box">
+            <b>답변 일시 : </b>
+            <div th:text="${answer.createTime}"/>
+        </div>
+    </div>
+    <div class="border">
+        <h2> answer</h2>
+        <div th:text="${answer.content}"/>
+    </div>
+</div>
+
+</body>
+</html>
